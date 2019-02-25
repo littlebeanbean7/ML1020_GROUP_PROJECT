@@ -1,24 +1,8 @@
-import pandas as pd
-import numpy as np
 import os
-import math
-
-from sklearn.model_selection import StratifiedKFold
-
 from keras.applications.inception_v3 import InceptionV3
 from keras.layers import Flatten, Dense, AveragePooling2D
 from keras.models import Model
 from keras.optimizers import SGD
-from keras.callbacks import ModelCheckpoint, EarlyStopping
-from keras.preprocessing.image import ImageDataGenerator
-
-import argparse
-import pickle
-import glob
-
-learning_rate = 0.0001
-nbr_epochs = 5
-batch_size = 32
 
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
