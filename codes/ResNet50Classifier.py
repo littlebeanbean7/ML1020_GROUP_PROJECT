@@ -34,7 +34,7 @@ batch_size = 32
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 class ResNet50Classifier:
-    def __init__(self, train_imgs_csvfile="data/driver_imgs_list.csv"):
+    def __init__(self, train_imgs_csvfile="../data/driver_imgs_list.csv"):
         self.df = pd.read_csv(train_imgs_csvfile)
         self.classnames = np.unique(self.df["classname"])
         if args.downsample is True:
@@ -43,8 +43,8 @@ class ResNet50Classifier:
         self.learning_rate = args.learning_rate
         self.nbr_epochs = args.nbr_epochs
         self.batch_size = args.batch_size
-        self.img_width = 299
-        self.img_height = 299
+        self.img_width = 224
+        self.img_height = 224
 
     def fit(self, saved_folder=None):
         if saved_folder is None:
@@ -65,8 +65,8 @@ class ResNet50Classifier:
                                         input_tensor=None,
                                         input_shape=(self.img_height, self.img_width, 3))
 
-        output = ResNet50_notop.get_layer(index=-1).output  # Shape: (8, 8, 2048)
-        output = AveragePooling2D((8, 8), strides=(8, 8), name='avg_pool')(output)
+        output = ResNet50_notop.get_layer(index=-1).output  # Shape: (7, 7, 2048)
+        output = AveragePooling2D((7, 7), strides=(7, 7), name='avg_pool')(output)
         output = Flatten(name='flatten')(output)
         output = Dense(len(self.classnames), activation='softmax', name='predictions')(output)
 
@@ -85,7 +85,7 @@ class ResNet50Classifier:
 
         train_generator = train_datagen.flow_from_dataframe(
                 df,
-                directory="data/imgs/train/", x_col="img", y_col="classname",
+                directory="../data/imgs/train/", x_col="img", y_col="classname",
                 target_size=(self.img_width, self.img_height),
                 batch_size=self.batch_size,
                 shuffle=True,
@@ -143,8 +143,8 @@ class ResNet50Classifier:
             ResNet50_notop = ResNet50(include_top=False, weights='imagenet',
                                             input_tensor=None,
                                             input_shape=(self.img_height, self.img_width, 3))
-            output = ResNet50_notop.get_layer(index=-1).output  # Shape: (8, 8, 2048)
-            output = AveragePooling2D((8, 8), strides=(8, 8), name='avg_pool')(output)
+            output = ResNet50_notop.get_layer(index=-1).output  # Shape: (7, 7, 2048)
+            output = AveragePooling2D((7, 7), strides=(7, 7), name='avg_pool')(output)
             output = Flatten(name='flatten')(output)
             output = Dense(len(self.classnames), activation='softmax', name='predictions')(output)
             ResNet50_model = Model(ResNet50_notop.input, output)
@@ -171,7 +171,7 @@ class ResNet50Classifier:
             val_datagen = ImageDataGenerator(rescale=1. / 255)
             train_generator = train_datagen.flow_from_dataframe(
                 df_train,
-                directory="data/imgs/train/", x_col="img", y_col="classname",
+                directory="../data/imgs/train/", x_col="img", y_col="classname",
                 target_size=(self.img_width, self.img_height),
                 batch_size=self.batch_size,
                 shuffle=True,
@@ -182,7 +182,7 @@ class ResNet50Classifier:
 
             validation_generator = val_datagen.flow_from_dataframe(
                 df_val,
-                directory="data/imgs/train/", x_col="img", y_col="classname",
+                directory="../data/imgs/train/", x_col="img", y_col="classname",
                 target_size=(self.img_width, self.img_height),
                 batch_size=self.batch_size,
                 shuffle=True,
