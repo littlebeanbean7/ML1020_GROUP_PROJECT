@@ -2,13 +2,13 @@ import os
 from keras.applications.resnet50 import ResNet50
 from keras.layers import Flatten, Dense, AveragePooling2D
 from keras.models import Model
-from keras.optimizers import SGD
+from keras.optimizers import Adam
 
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 
 class ResNet50ClassifierTemplate:
-    def __init__(self, learning_rate=0.0001, num_classes=10):
+    def __init__(self, learning_rate=0.001, num_classes=10):
         self.model_name = "ResNet50"
         self.learning_rate = learning_rate
         self.img_width = 224
@@ -24,6 +24,6 @@ class ResNet50ClassifierTemplate:
         output = Flatten(name='flatten')(output)
         output = Dense(self.num_classes, activation='softmax', name='predictions')(output)
         ResNet50_model = Model(ResNet50_notop.input, output)
-        optimizer = SGD(lr=self.learning_rate, momentum=0.9, decay=0.0, nesterov=True)
+        optimizer = Adam(lr=self.learning_rate, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
         ResNet50_model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
         return ResNet50_model

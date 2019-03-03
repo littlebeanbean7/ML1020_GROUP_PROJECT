@@ -25,7 +25,7 @@ parser = argparse.ArgumentParser()
 #                    help="Model Name (should be InceptionV3 for this file)")
 parser.add_argument("-ds", "--downsample", default=0, type=bool,
                     help="Whether to downsample dataset")
-parser.add_argument('-lr', "--learning_rate", default=0.0001, type=float)
+parser.add_argument('-lr', "--learning_rate", default=0.001, type=float)
 parser.add_argument('-epochs', "--nbr_epochs", default=30, type=int)
 parser.add_argument('-bs', "--batch_size", default=32, type=int)
 args = parser.parse_args()
