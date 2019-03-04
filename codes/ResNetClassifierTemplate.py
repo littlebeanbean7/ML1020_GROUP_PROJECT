@@ -8,7 +8,7 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 
 class ResNet50ClassifierTemplate:
-    def __init__(self, learning_rate=0.001, num_classes=10):
+    def __init__(self, learning_rate=0.0001, num_classes=10):
         self.model_name = "ResNet50"
         self.learning_rate = learning_rate
         self.img_width = 224
