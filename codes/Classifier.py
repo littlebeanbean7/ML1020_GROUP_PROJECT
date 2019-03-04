@@ -25,7 +25,6 @@ parser = argparse.ArgumentParser()
 #                    help="Model Name (should be InceptionV3 for this file)")
 parser.add_argument("-ds", "--downsample", default=0, type=bool,
                     help="Whether to downsample dataset")
-parser.add_argument('-lr', "--learning_rate", default=0.0001, type=float)
 parser.add_argument('-epochs', "--nbr_epochs", default=30, type=int)
 parser.add_argument('-bs', "--batch_size", default=32, type=int)
 args = parser.parse_args()
@@ -77,7 +76,7 @@ class Classifier:
                 # classes = class_names,
                 class_mode='categorical',
                 classes={"c0": 0, "c1": 1, "c2": 2, "c3": 3, "c4": 4, "c5": 5, "c6": 6, "c7": 7, "c8": 8, "c9": 9})
-            early = EarlyStopping(monitor="val_loss", mode="min", patience=3)
+            early = EarlyStopping(monitor="val_loss", mode="min", patience=6)
             callbacks_list = [early]
             if model_save_file is not None:
                 best_model_callback = ModelCheckpoint(model_save_file, monitor='val_loss',
@@ -131,6 +130,8 @@ class Classifier:
         y = self.df["classname"]
         skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
         for i, (train_index, val_index) in enumerate(skf.split(df, y)):
+            if i<=2:
+                continue
             print("CV round %d..." % i)
             df_train = df.iloc[train_index].reset_index(drop=True)
             df_val = df.iloc[val_index].reset_index(drop=True)
@@ -221,10 +222,10 @@ class Classifier:
 
 def main():
     clf = Classifier()
-    #clf.cross_validate_fit(InceptionV3ClassifierTemplate(), "../saved_models")
-    #clf.cross_validate_eval("../saved_models", InceptionV3ClassifierTemplate())
-    clf.fit_on_wholedataset(InceptionV3ClassifierTemplate(), "../saved_models")
-    clf.whole_dataset_eval("../saved_models", InceptionV3ClassifierTemplate())
+    clf.cross_validate_fit(InceptionV3ClassifierTemplate(), "../saved_models")
+    clf.cross_validate_eval("../saved_models", InceptionV3ClassifierTemplate())
+    #clf.fit_on_wholedataset(InceptionV3ClassifierTemplate(), "../saved_models")
+    #clf.whole_dataset_eval("../saved_models", InceptionV3ClassifierTemplate())
 
 
 if __name__ == '__main__':
