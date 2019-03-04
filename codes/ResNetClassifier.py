@@ -9,7 +9,7 @@ from sklearn.model_selection import StratifiedKFold
 from keras.applications.resnet50 import ResNet50
 from keras.layers import Flatten, Dense, AveragePooling2D
 from keras.models import Model
-from keras.optimizers import RMSprop, SGD
+from keras.optimizers import RMSprop, SGD, Adam
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.preprocessing.image import ImageDataGenerator
 
@@ -22,10 +22,9 @@ from ResNetClassifierTemplate import ResNet50ClassifierTemplate
 
 parser = argparse.ArgumentParser()
 #parser.add_argument("-m", "--modelname", required=True,
-#                    help="Model Name (should be InceptionV3 for this file)")
+#                    help="Model Name (should be ResNet50 for this file)")
 parser.add_argument("-ds", "--downsample", default=0, type=bool,
                     help="Whether to downsample dataset")
-parser.add_argument('-lr', "--learning_rate", default=0.001, type=float)
 parser.add_argument('-epochs', "--nbr_epochs", default=30, type=int)
 parser.add_argument('-bs', "--batch_size", default=32, type=int)
 args = parser.parse_args()
@@ -77,12 +76,12 @@ class Classifier:
                 # classes = class_names,
                 class_mode='categorical',
                 classes={"c0": 0, "c1": 1, "c2": 2, "c3": 3, "c4": 4, "c5": 5, "c6": 6, "c7": 7, "c8": 8, "c9": 9})
-            early = EarlyStopping(monitor="val_loss", mode="min", patience=3)
-            callbacks_list = [early]
-            if model_save_file is not None:
-                best_model_callback = ModelCheckpoint(model_save_file, monitor='val_loss',
+            #early = EarlyStopping(monitor="val_loss", mode="min", patience=6)
+            #callbacks_list = [early]
+            callbacks_list = []
+            best_model_callback = ModelCheckpoint(model_save_file, monitor='val_loss',
                                                       verbose=1, save_best_only=True)
-                callbacks_list.append(best_model_callback)
+            callbacks_list.append(best_model_callback)
         else:
             validation_generator = None
             validation_steps = None
@@ -131,12 +130,18 @@ class Classifier:
         y = self.df["classname"]
         skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
         for i, (train_index, val_index) in enumerate(skf.split(df, y)):
+            #if i<=2:
+            #    continue
             print("CV round %d..." % i)
             df_train = df.iloc[train_index].reset_index(drop=True)
             df_val = df.iloc[val_index].reset_index(drop=True)
             best_model_file = saved_folder+"/"+classifier_template.model_name + "/bestmodel.hdf5.cv" + str(i)
+            #save history
+            history_file = saved_folder+"/"+classifier_template.model_name + "/history.cv" + str(i) + ".txt"
             self.fit(classifier_template, df_train, df_val, "../data/imgs/train/",
-                     batch_size=32, nbr_epochs=self.nbr_epochs, model_save_file=best_model_file)
+                     batch_size=32, nbr_epochs=self.nbr_epochs, model_save_file=best_model_file,
+                     history_save_file = history_file
+                     )
 
     def fit_on_wholedataset(self, classifier_template, saved_folder=None):
         if saved_folder is None:
@@ -148,9 +153,13 @@ class Classifier:
             os.mkdir(saved_folder+"/"+classifier_template.model_name)
         df = self.df[["img", "classname"]]
         best_model_file = saved_folder + "/" + classifier_template.model_name + "/bestmodel.wholedata.hdf5"
+        #save history
+        history_file = saved_folder + "/" + classifier_template.model_name + "/history.wholedata.txt"
         self.fit(classifier_template, df, df_val=None, imgs_folder="../data/imgs/train/",
                  batch_size=32, nbr_epochs=self.nbr_epochs,
-                 model_save_file=best_model_file)
+                 model_save_file=best_model_file,
+                 history_save_file = history_file
+                 )
 
     def cross_validate_eval(self, saved_folder, classifier_template):
         if saved_folder is None:
