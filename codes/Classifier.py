@@ -76,12 +76,12 @@ class Classifier:
                 # classes = class_names,
                 class_mode='categorical',
                 classes={"c0": 0, "c1": 1, "c2": 2, "c3": 3, "c4": 4, "c5": 5, "c6": 6, "c7": 7, "c8": 8, "c9": 9})
-            early = EarlyStopping(monitor="val_loss", mode="min", patience=6)
-            callbacks_list = [early]
-            if model_save_file is not None:
-                best_model_callback = ModelCheckpoint(model_save_file, monitor='val_loss',
+            #early = EarlyStopping(monitor="val_loss", mode="min", patience=6)
+            #callbacks_list = [early]
+            callbacks_list = []
+            best_model_callback = ModelCheckpoint(model_save_file, monitor='val_loss',
                                                       verbose=1, save_best_only=True)
-                callbacks_list.append(best_model_callback)
+            callbacks_list.append(best_model_callback)
         else:
             validation_generator = None
             validation_steps = None
