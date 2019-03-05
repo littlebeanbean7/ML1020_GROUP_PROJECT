@@ -137,7 +137,7 @@ class Classifier:
             df_val = df.iloc[val_index].reset_index(drop=True)
             best_model_file = saved_folder+"/"+classifier_template.model_name + "/bestmodel.hdf5.cv" + str(i)
             #save history
-            history_file = saved_folder+"/"+classifier_template.model_name + "/history.cv" + str(i) + ".txt"
+            history_file = saved_folder+"/"+classifier_template.model_name + "/history.cv" + str(i) + ".pickle"
             self.fit(classifier_template, df_train, df_val, "../data/imgs/train/",
                      batch_size=32, nbr_epochs=self.nbr_epochs, model_save_file=best_model_file,
                      history_save_file = history_file
@@ -154,7 +154,7 @@ class Classifier:
         df = self.df[["img", "classname"]]
         best_model_file = saved_folder + "/" + classifier_template.model_name + "/bestmodel.wholedata.hdf5"
         #save history
-        history_file = saved_folder + "/" + classifier_template.model_name + "/history.wholedata.txt"
+        history_file = saved_folder + "/" + classifier_template.model_name + "/history.wholedata.pickle"
         self.fit(classifier_template, df, df_val=None, imgs_folder="../data/imgs/train/",
                  batch_size=32, nbr_epochs=self.nbr_epochs,
                  model_save_file=best_model_file,
