@@ -6,27 +6,19 @@ import math
 from keras.models import load_model
 from sklearn.model_selection import StratifiedKFold
 
-from keras.applications.inception_v3 import InceptionV3
-from keras.layers import Flatten, Dense, AveragePooling2D
-from keras.models import Model
-from keras.optimizers import RMSprop, SGD
-from keras.callbacks import ModelCheckpoint, EarlyStopping
-from keras.applications import densenet
-from keras import regularizers
+from keras.callbacks import ModelCheckpoint
 from keras.preprocessing.image import ImageDataGenerator
-from keras import backend as K
 
 import argparse
 import pickle
-import glob
 
 # my model
 from DenseNet import DenseNetTemplate
 
-conf = K.tf.ConfigProto(device_count={'CPU': 4}, 
-                        intra_op_parallelism_threads=4, 
-                        inter_op_parallelism_threads=4)
-K.set_session(K.tf.Session(config=conf))
+#conf = K.tf.ConfigProto(device_count={'CPU': 4}, 
+#                        intra_op_parallelism_threads=8, 
+#                        inter_op_parallelism_threads=8)
+#K.set_session(K.tf.Session(config=conf))
 
 parser = argparse.ArgumentParser()
 #parser.add_argument("-m", "--modelname", required=True,
