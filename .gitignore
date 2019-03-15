@@ -106,4 +106,6 @@ venv.bak/
 data/*.zip
 data/train_metadata/*
 data/*
-saved_models/*
+#saved_models/*
+
+.idea/

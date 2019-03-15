@@ -1,0 +1,35 @@
+(1) Project
+We have chosen the following kaggle competition:
+https://www.kaggle.com/c/state-farm-distracted-driver-detection
+
+(2) Data
+We have not seen data imbalance in the training data. However, there are ~22K images in the training set. Yet there are about ~78K images in the test set (from which the submission.csv should be based on).
+Further, the test subjects (people in the car) will not appear in the training set and test set at the same time.
+
+(3) Model
+We have evaluated a model using InceptionV3's pre-trained weights documented in the following link:
+https://keras.io/applications/#inceptionv3
+We have trained the model 30 epochs using a learning rate of 0.0001. The following table summarizes the cross-validation results on the training set. We also train a pretrained model against the whole training set. This way, we have a total of 6 models.
+
+CV round           0         1         2         3         4      mean       std
+train_loss  0.004741  0.004954  0.006126  0.004986  0.004745  0.005110  0.000518
+train_acc   0.999219  0.999275  0.998885  0.999275  0.999108  0.999153  0.000147
+val_loss    0.021353  0.022775  0.019593  0.026735  0.021053  0.022302  0.002436
+val_acc     0.993541  0.995097  0.993977  0.993531  0.993528  0.993935  0.000606
+
+It takes up to 48 hours to train these 6 models. So the cost is about $25 ~ $30 for 6 models if we use google cloud's Nvidia K80 GPU. The first submission we tried is built from the models that train on the whole dataset. After we submitted, we found our loss on the public and private leader board is very large, >6.9. While in the above table, the cross-validation loss is only ~0.02. Something is wrong. We find two problems in our codes.
+
+First, the "predict_generator" function from Keras does not respect the ordering of input images, which results in very high public and private leader loss after we submit our prediction to Kaggle. We have manually investigated the prediction from "predict_generator" and see that the prediction doesn't make sense, although using "evaluate_generator" on the trained models gives very low loss and very high accuracy (>99%). In the end, we reverse back to the big for-loop in which we generate a prediction using the "predict" over each individual image.
+
+Another problem is the label encoding. If not specified, Keras choose its own way to encode the labels. We have ten classes, "c0", "c1", "c2"... "c9". We human would want to encode the class by "c0"=0, "c1"=1, "c2"=2, ... "c9"=0. However keras would choose to encode it by "c0"=2, "c1"=0,"c2"=5... etc. Worse, the encoding could be different for ImageGnerator built on one fold of the training set as compared to on the whole training set. We decided to make a change to the code so that the encoding is consistent. However, this requires retraining the models.
+
+To verify the problems in are codes are removed, we made another round of submission after the above two problems are solved. We trained an InceptionV3 with just 5 epochs. And the loss score we get is:
+0.67718 on public leadership board;
+0.43727 on private leadership board.
+
+(4) Next step
+We plan to do ensembling to improve our score in the competition. Below are the plans for ensembling.
+a) We train 5 models during the 5 folds cross-validation. Together with the model train on the whole dataset, we can generate new predictions by taking the average of the predictions of the 6 models.
+b) We plan to train two more models using pre-trained nets - ResNet50 and DenseNet169. We can also ensemble by taking averages of the 3 distinct models.
+c) For each individual image, we plan to generate 10 images by image augmentation. Then do prediction on the 10 images. We can generate new prediction by taking an average of the 10 predictions of this particular image.
+Combining the above 3 methods, for each individual test image, we will have 6*3*10=180 predictions. We will generate our final predictions by taking the 180 predictions.
