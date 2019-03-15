@@ -3,6 +3,11 @@ State Farm Distracted Driver Detection Competition
 https://www.kaggle.com/c/state-farm-distracted-driver-detection   
 
 Final standing:   
+Private Leaderboard score 0.20022   
+63 out of 1440 teams (Top 4.4%)   
+
+Public Leaderboard score 0.21994   
+103 out of 1440 teams (Top 7.2%)   
 
 
 ## What's included in this repository
