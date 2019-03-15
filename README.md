@@ -3,11 +3,7 @@ State Farm Distracted Driver Detection Competition
 https://www.kaggle.com/c/state-farm-distracted-driver-detection   
 
 Final standing:   
-Private Leaderboard score 0.26251   
-152 out of 1440 teams (Top 10.6%)   
 
-Public Leaderboard score 0.32938   
-216 out of 1440 teams (Top 15.0%)   
 
 ## What's included in this repository
 
@@ -15,8 +11,11 @@ Public Leaderboard score 0.32938
 Presentation slides, final submitted report, and mid-project reports are located here. Readers are suggested to start from the final submitted report and presentation slides.  
 
 ### submissions/   
-* final.csv   
-Final submissions to kaggle that have the reported standing at the beginning of this file.
+* final_candidate1.csv   
+Final submissions to kaggle - candidate1
+* final_candidate2.csv   
+Final submissions to kaggle - candidate2   
+For description of candidate1 and candidate2, please refer to presentation slides.   
 
 ### codes/    
 * InceptionV3ClassifierTemplate.py, codes/ResNetClassifierTemplate.py  
