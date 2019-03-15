@@ -24,6 +24,6 @@ class ResNet50ClassifierTemplate:
         output = Flatten(name='flatten')(output)
         output = Dense(self.num_classes, activation='softmax', name='predictions')(output)
         ResNet50_model = Model(ResNet50_notop.input, output)
-        optimizer = Adam(lr=self.learning_rate, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+        optimizer = Adam()
         ResNet50_model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
         return ResNet50_model

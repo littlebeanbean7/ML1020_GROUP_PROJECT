@@ -6,19 +6,15 @@ import math
 from keras.models import load_model
 from sklearn.model_selection import StratifiedKFold
 
-from keras.applications.inception_v3 import InceptionV3
-from keras.layers import Flatten, Dense, AveragePooling2D
-from keras.models import Model
-from keras.optimizers import RMSprop, SGD
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.preprocessing.image import ImageDataGenerator
 
 import argparse
 import pickle
-import glob
 
 # my model
 from InceptionV3ClassifierTemplate import InceptionV3ClassifierTemplate
+from ResNetClassifierTemplate import ResNet50ClassifierTemplate
 
 parser = argparse.ArgumentParser()
 #parser.add_argument("-m", "--modelname", required=True,
@@ -135,9 +131,12 @@ class Classifier:
             print("CV round %d..." % i)
             df_train = df.iloc[train_index].reset_index(drop=True)
             df_val = df.iloc[val_index].reset_index(drop=True)
-            best_model_file = saved_folder+"/"+classifier_template.model_name + "/bestmodel.hdf5.cv" + str(i)
+            best_model_file = saved_folder+"/"+classifier_template.model_name + "/bestmodel.cv" + str(i) + ".hdf5"
+            history_file = saved_folder+"/"+classifier_template.model_name + "/history.cv" + str(i) + ".pickle"
             self.fit(classifier_template, df_train, df_val, "../data/imgs/train/",
-                     batch_size=32, nbr_epochs=self.nbr_epochs, model_save_file=best_model_file)
+                     batch_size=32, nbr_epochs=self.nbr_epochs,
+                     model_save_file=best_model_file,
+                     history_save_file=history_file)
 
     def fit_on_wholedataset(self, classifier_template, saved_folder=None):
         if saved_folder is None:
@@ -149,9 +148,11 @@ class Classifier:
             os.mkdir(saved_folder+"/"+classifier_template.model_name)
         df = self.df[["img", "classname"]]
         best_model_file = saved_folder + "/" + classifier_template.model_name + "/bestmodel.wholedata.hdf5"
+        history_file = saved_folder + "/" + classifier_template.model_name + "/history.wholedata.pickle"
         self.fit(classifier_template, df, df_val=None, imgs_folder="../data/imgs/train/",
                  batch_size=32, nbr_epochs=self.nbr_epochs,
-                 model_save_file=best_model_file)
+                 model_save_file=best_model_file,
+                 history_save_file=history_file)
 
     def cross_validate_eval(self, saved_folder, classifier_template):
         if saved_folder is None:
@@ -222,10 +223,10 @@ class Classifier:
 
 def main():
     clf = Classifier()
-    clf.cross_validate_fit(InceptionV3ClassifierTemplate(), "../saved_models")
-    clf.cross_validate_eval("../saved_models", InceptionV3ClassifierTemplate())
-    #clf.fit_on_wholedataset(InceptionV3ClassifierTemplate(), "../saved_models")
-    #clf.whole_dataset_eval("../saved_models", InceptionV3ClassifierTemplate())
+    clf.cross_validate_fit(ResNet50ClassifierTemplate(), "../saved_models")
+    clf.cross_validate_eval("../saved_models", ResNet50ClassifierTemplate())
+    clf.fit_on_wholedataset(ResNet50ClassifierTemplate(), "../saved_models")
+    clf.whole_dataset_eval("../saved_models", InceptionV3ClassifierTemplate())
 
 
 if __name__ == '__main__':
