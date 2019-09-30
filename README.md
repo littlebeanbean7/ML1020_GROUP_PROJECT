@@ -1,4 +1,4 @@
-# Kaggle Competition: Image Classification on Distracteds Drivers
+# Kaggle Competition: Image Classification on Distracted Drivers
 State Farm Distracted Driver Detection Competition   
 https://www.kaggle.com/c/state-farm-distracted-driver-detection   
 
