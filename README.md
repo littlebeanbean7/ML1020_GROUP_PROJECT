@@ -1,4 +1,4 @@
-# ML1020_GROUP_PROJECT
+# Kaggle Competition: Image Classification on Distracteds Drivers
 State Farm Distracted Driver Detection Competition   
 https://www.kaggle.com/c/state-farm-distracted-driver-detection   
 
